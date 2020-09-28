@@ -1,7 +1,19 @@
-from pathlib import Path
+import logging
+
+import pymel.core as pmc
+from pymel.core.system import Path
+
+log = logging.getLogger(__name__)
 
 class SceneFile(object):
-    def __init__(self, path):
+    def __init__(self, path=None):
+        scene = pmc.system.sceneName()
+        if not path and scene:
+            path = scene
+        if not path and not scene:
+            log.warning("Unable to initialize SceneFile object from a"
+                        "new scene. Please specify a path.")
+            return
         self._init_from_path(path)
 
     @property
@@ -19,19 +31,49 @@ class SceneFile(object):
     def _init_from_path(self, path):
         path = Path(path)
         self.folder_path = path.parent
-        self.ext = path.suffix
-        self.descriptor, self.task, ver = path.stem.split("_")
+        self.ext = path.ext
+        self.descriptor, self.task, ver = path.name.stripext().split("_")
         self.ver = int(ver.split("v")[-1])
 
+    def save(self):
+        """Saves the scene file
 
-scene_file = SceneFile("D:/tank_model_v001.ma")
-print(scene_file.folder_path)
-print(scene_file.descriptor)
-print(scene_file.task)
-print(scene_file.ver)
-print(scene_file.ext)
-print(scene_file.filename)
-print(scene_file.path)
+        Returns:
+             Path: The path to the scene file if successful"""
+        try:
+            return pmc.system.saveAs(self.path)
+        except RuntimeError as err:
+            log.warning("Missing directories in path. Creating folders.")
+            self.folder_path.makedirs_p()
+            return pmc.system.saveAs(self.path)
+
+    def next_avail_ver(self):
+        """returns the next available version number in the folder."""
+        pattern = "{descriptor}_{task}_v*{ext}".format(
+            descriptor=self.descriptor, task=self.task, ext=self.ext)
+        matching_scenefiles = []
+        for file_ in self.folder_path.files():
+            if file_.name.fnmatch(pattern):
+                matching_scenefiles.append(file_)
+        if not matching_scenefiles:
+            return 1
+        matching_scenefiles.sort(reverse=True)
+        latest_scenefile = matching_scenefiles[0]
+        latest_scenefile = latest_scenefile.name.stripext()
+        latest_version_num = int(latest_scenefile.split("_v")[-1])
+        return latest_version_num + 1
+
+    def increment_save(self):
+        """Increments the version and saves the scene file.
+
+        If the existing version of a file already exists, it should increment
+        from the largest version number availible in the folder
+
+        Returns:
+            Path: The path to the scene file if successful
+        """
+        self.ver = self.next_avail_ver()
+        self.save()
 
 
 
