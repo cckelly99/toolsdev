@@ -3,8 +3,6 @@ import maya.cmds as cmds
 from PySide2 import QtWidgets, QtCore
 from shiboken2 import wrapInstance
 import maya.OpenMayaUI as omui
-import pymel.core as pmc
-from pymel.core.system import Path
 
 
 def maya_main_window():
@@ -42,7 +40,6 @@ class ScatterUI(QtWidgets.QDialog):
 
         self.scatter_tool.scatter(self.min_scale, self.max_scale,
                                   self.min_rot, self.max_rot, self.density)
-
 
     @QtCore.Slot()
     def _choose_objects(self):
