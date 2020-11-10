@@ -163,8 +163,9 @@ class ScatterUI(QtWidgets.QDialog):
         self.density_sbx.setRange(1, 100)
 
         sbx_layout = QtWidgets.QHBoxLayout()
-        sbx_layout.addWidget(self.add_den_btn)
         sbx_layout.addWidget(self.subtract_den_btn)
+        sbx_layout.addWidget(self.density_sbx)
+        sbx_layout.addWidget(self.add_den_btn)
         layout = QtWidgets.QVBoxLayout()
         layout.addWidget(self.density_name)
         layout.addLayout(sbx_layout)
