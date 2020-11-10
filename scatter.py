@@ -29,6 +29,15 @@ class ScatterUI(QtWidgets.QDialog):
         self.scatter_push_btn.clicked.connect(self._scatter_object)
         self.ots_button.clicked.connect(self._choose_objects)
 
+        self.add_rot_btn.clicked.connect(self._add_min_rot)
+        self.subtract_rot_btn.clicked.connect(self._subtract_min_rot)
+        self.add_max_rot_btn.clicked.connect(self._add_max_rot)
+        self.subtract_max_rot_btn.clicked.connect(self._subtract_max_rot)
+
+        self.add_den_btn.clicked.connect(self._add_den)
+        self.subtract_den_btn.clicked.connect(self._subtract_den)
+
+
     @QtCore.Slot()
     def _scatter_object(self):
         """Scatters the object based on the values set"""
@@ -46,6 +55,30 @@ class ScatterUI(QtWidgets.QDialog):
         """Selects and sets objects"""
         self.ots_layout.setText(self.scatter_tool.set_scatter_object())
         self.os_layout.setText(self.scatter_tool.set_scatter_base())
+
+    @QtCore.Slot()
+    def _add_min_rot(self):
+        self.min_rot_sbx.setValue(self.min_rot_sbx.value() + 10)
+
+    @QtCore.Slot()
+    def _subtract_min_rot(self):
+        self.min_rot_sbx.setValue(self.min_rot_sbx.value() - 10)
+
+    @QtCore.Slot()
+    def _add_max_rot(self):
+        self.max_rot_sbx.setValue(self.max_rot_sbx.value() + 10)
+
+    @QtCore.Slot()
+    def _subtract_max_rot(self):
+        self.max_rot_sbx.setValue(self.max_rot_sbx.value() - 10)
+
+    @QtCore.Slot()
+    def _add_den(self):
+        self.density_sbx.setValue(self.density_sbx.value() + 10)
+
+    @QtCore.Slot()
+    def _subtract_den(self):
+        self.density_sbx.setValue(self.density_sbx.value() - 10)
 
     def create_ui(self):
         """Puts Together UI"""
@@ -102,25 +135,39 @@ class ScatterUI(QtWidgets.QDialog):
     def _rotation_box_layout(self):
         self.min_rot_sbx = QtWidgets.QDoubleSpinBox()
         self.max_rot_sbx = QtWidgets.QDoubleSpinBox()
+        self.add_rot_btn = QtWidgets.QPushButton("+10")
+        self.subtract_rot_btn = QtWidgets.QPushButton("-10")
+        self.add_max_rot_btn = QtWidgets.QPushButton("+10")
+        self.subtract_max_rot_btn = QtWidgets.QPushButton("-10")
         self.min_rot_sbx.setFixedWidth(100)
         self.max_rot_sbx.setFixedWidth(100)
         self.min_rot_sbx.setRange(0.0, 360.0)
         self.max_rot_sbx.setRange(0.0, 360.0)
 
         layout = QtWidgets.QHBoxLayout()
+        layout.addWidget(self.subtract_rot_btn)
         layout.addWidget(self.min_rot_sbx)
+        layout.addWidget(self.add_rot_btn)
+
+        layout.addWidget(self.subtract_max_rot_btn)
         layout.addWidget(self.max_rot_sbx)
+        layout.addWidget(self.add_max_rot_btn)
         return layout
 
     def _density_layout(self):
         self.density_name = QtWidgets.QLabel("Set Scatter Density")
         self.density_sbx = QtWidgets.QSpinBox()
+        self.add_den_btn = QtWidgets.QPushButton("+10")
+        self.subtract_den_btn = QtWidgets.QPushButton("-10")
         self.density_sbx.setFixedWidth(50)
         self.density_sbx.setRange(1, 100)
 
+        sbx_layout = QtWidgets.QHBoxLayout()
+        sbx_layout.addWidget(self.add_den_btn)
+        sbx_layout.addWidget(self.subtract_den_btn)
         layout = QtWidgets.QVBoxLayout()
         layout.addWidget(self.density_name)
-        layout.addWidget(self.density_sbx)
+        layout.addLayout(sbx_layout)
         return layout
 
 
