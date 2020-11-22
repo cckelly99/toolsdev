@@ -37,7 +37,6 @@ class ScatterUI(QtWidgets.QDialog):
         self.add_den_btn.clicked.connect(self._add_den)
         self.subtract_den_btn.clicked.connect(self._subtract_den)
 
-
     @QtCore.Slot()
     def _scatter_object(self):
         """Scatters the object based on the values set"""
